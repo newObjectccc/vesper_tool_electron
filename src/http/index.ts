@@ -22,13 +22,19 @@ export function useAxios<P, R>(
   const [cancelToken, setCancelToken] = useState<CancelTokenSource | null>();
 
   const request = useCallback(
-    async (params: P, modifyConfig: AxiosRequestConfig, flushCache?: boolean) => {
+    async (params: P, modifyConfig?: AxiosRequestConfig, flushCache?: boolean) => {
       try {
         setLoading(true);
+        // get api path
+        const apiPath = new URL(config.url ?? '', baseConfig.baseURL).pathname;
         // merge config
         const mergedConfig = { ...config, ...modifyConfig };
+        mergedConfig.url = apiPath;
         // get data from cache
-        if (!flushCache && cacheKey) return cacheMap.get(cacheKey ?? mergedConfig.url);
+        if (!flushCache) {
+          const cachedData = cacheMap.get(cacheKey ?? mergedConfig.url);
+          if (cachedData) return setData(cachedData as R);
+        }
         // set params
         if (mergedConfig.method === 'get') mergedConfig.params = params;
         if (mergedConfig.method === 'post') mergedConfig.data = params;
