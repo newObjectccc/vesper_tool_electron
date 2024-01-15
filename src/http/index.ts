@@ -22,7 +22,7 @@ export function useAxios<P, R>(
   const [cancelToken, setCancelToken] = useState<CancelTokenSource | null>();
 
   const request = useCallback(
-    async (params: P, modifyConfig?: AxiosRequestConfig, flushCache?: boolean) => {
+    async (params?: P, modifyConfig?: AxiosRequestConfig, flushCache?: boolean) => {
       try {
         setLoading(true);
         // get api path
@@ -36,8 +36,10 @@ export function useAxios<P, R>(
           if (cachedData) return setData(cachedData as R);
         }
         // set params
-        if (mergedConfig.method === 'get') mergedConfig.params = params;
-        if (mergedConfig.method === 'post') mergedConfig.data = params;
+        if (params) {
+          if (mergedConfig.method === 'get') mergedConfig.params = params;
+          if (mergedConfig.method === 'post') mergedConfig.data = params;
+        }
         // cancel previous request
         cancelPrevious && abort();
         // create cancel token

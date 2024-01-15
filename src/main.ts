@@ -1,5 +1,6 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { BrowserWindow, app, ipcMain, screen } from 'electron';
 import path from 'path';
+import { ipcEventsList } from './lib/ipcListenerInjection';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -10,14 +11,15 @@ const createWindow = () => {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 150,
-    height: 150,
-    x: width - 225,
-    y: height - 225,
+    width: 140,
+    height: 140,
+    x: width - 210,
+    y: height - 210,
     alwaysOnTop: true,
     frame: false,
     transparent: true,
     resizable: false,
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -61,3 +63,7 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+Object.entries(ipcEventsList).forEach(([key, handler]) => {
+  ipcMain.on(key, handler);
+});
