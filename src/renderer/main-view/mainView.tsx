@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useMounted } from '../../hooks/useMounted';
 import styles from './mainView.module.css';
-interface MainViewProps {
-  title: string;
-}
 
-const MainView = (props: MainViewProps) => {
+const MainView = () => {
   useMounted(() => {
     console.log('useBeforeMount');
   });
 
-  const { title } = props;
-  const { clipboard, imgSrcMap } = window.electron;
+  const { clipboard, imgSrcMap, ipcRenderer } = window.electron;
   const [clipboardContent, setClipboardContent] = useState(clipboard.readText());
 
   useEffect(() => {
@@ -27,12 +23,15 @@ const MainView = (props: MainViewProps) => {
       clearInterval(intervalId);
     };
   }, [clipboardContent]);
+
   return (
-    <div>
-      {/* <h1>💖 Hello World!</h1> */}
-      {/* <p>Welcome to your Electron application.</p>
-      {title && <p>title: {title}</p>} */}
-      <img className={styles['img']} src={imgSrcMap.get('xf')} alt="loading" />
+    <div className={styles['warpper']}>
+      <img
+        className={styles['img']}
+        src={imgSrcMap.get('xf')}
+        onClick={() => ipcRenderer.send('create-window', 'block')}
+        alt="loading"
+      />
     </div>
   );
 };

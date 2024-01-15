@@ -12,5 +12,6 @@ interface Window {
       writeText: (text: string) => void;
     };
     imgSrcMap: Map<string, string>;
+    ipcRenderer: Electron.IpcRenderer;
   };
 }
